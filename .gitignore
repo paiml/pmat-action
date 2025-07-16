@@ -38,7 +38,6 @@ tsconfig.tsbuildinfo
 
 # GitHub Action
 # Ignore the compiled JavaScript files in the dist directory
-/dist/*
 !/dist/index.js
 
 # OS
