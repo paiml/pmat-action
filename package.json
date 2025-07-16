@@ -1,0 +1,27 @@
+{
+  "name": "pmat-action",
+  "version": "1.0.0",
+  "description": "This GitHub Action uses the PMAT tool to check complexity on your source code. The PMAT tool is automatically downloaded and installed in your CI environment. The cyclomatic complexity for each file is calculated and then reported back in the Pull Request as Markdown using the GitHub token and making it very simple for the user",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "package": "ncc build src/main.ts -o dist",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/exec": "^1.1.1",
+    "@actions/github": "^6.0.1",
+    "@types/jest": "^30.0.0",
+    "jest": "^30.0.4",
+    "ts-jest": "^29.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.13",
+    "@vercel/ncc": "^0.38.1",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,46 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+pids
+*.pid
+*.seed
+*.log
+*.log.[0-9]
+*.log.[0-9].gz
+*.log.[0-9].bz2
+*.log.[0-9].xz
+*.log.[0-9].zst
+lib-cov
+coverage
+.nyc_output
+.grunt
+bower_components
+.lock-wscript
+build/
+dist/
+.npm
+.eslintcache
+*.tgz
+.yarn-integrity
+.env
+.env.test
+.env.production
+.env.local
+
+# TypeScript
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# GitHub Action
+# Ignore the compiled JavaScript files in the dist directory
+/dist/*
+!/dist/index.js
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,19 @@
+name: 'PMAT Complexity Check'
+description: 'Checks code complexity using the PMAT tool.'
+author: 'paiml'
+inputs:
+  max-cyclomatic:
+    description: 'The maximum cyclomatic complexity allowed.'
+    required: false
+    default: '20'
+  fail-on-violation:
+    description: 'Whether to fail the action if the complexity is too high.'
+    required: false
+    default: 'true'
+  comment-on-pr:
+    description: 'Whether to comment on the PR with the complexity results.'
+    required: false
+    default: 'true'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
