@@ -30144,7 +30144,13 @@ async function runPmat(maxCyclomatic, failOnViolation) {
             }
         }
     };
-    await exec.exec(`pmat analyze complexity --fail-on-violation ${failOnViolation} --max-cyclomatic ${maxCyclomatic} --format JSON`, [], options);
+    // Build the command with conditional flag inclusion
+    let command = `pmat analyze complexity`;
+    if (failOnViolation === 'true') {
+        command += ` --fail-on-violation`;
+    }
+    command += ` --max-cyclomatic ${maxCyclomatic} --format JSON`;
+    await exec.exec(command, [], options);
     return JSON.parse(output);
 }
 
