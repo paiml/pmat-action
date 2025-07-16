@@ -6,6 +6,6 @@ jest.mock('@actions/exec');
 describe('installPmat', () => {
   it('should call the installer script', async () => {
     await installPmat();
-    expect(exec.exec).toHaveBeenCalledWith('curl -sSfL https://raw.githubusercontent.com/paiml/paiml-mcp-agent-toolkit/master/scripts/install.sh | sh');
+    expect(exec.exec).toHaveBeenCalledWith('bash', ['-c', 'curl -sSfL https://raw.githubusercontent.com/paiml/paiml-mcp-agent-toolkit/master/scripts/install.sh | sh']);
   });
 });
