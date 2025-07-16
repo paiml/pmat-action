@@ -30043,6 +30043,7 @@ const installer_1 = __nccwpck_require__(7651);
 const pmat_1 = __nccwpck_require__(205);
 const markdown_1 = __nccwpck_require__(3758);
 async function run() {
+    var _a;
     try {
         const maxCyclomatic = core.getInput('max-cyclomatic');
         const failOnViolation = core.getInput('fail-on-violation');
@@ -30050,6 +30051,10 @@ async function run() {
         const token = core.getInput('github-token');
         await (0, installer_1.installPmat)();
         const results = await (0, pmat_1.runPmat)(maxCyclomatic, failOnViolation);
+        // Early return if no violations
+        if (!((_a = results.summary) === null || _a === void 0 ? void 0 : _a.violations) || results.summary.violations.length === 0) {
+            return;
+        }
         if (commentOnPr === 'true' && github.context.payload.pull_request) {
             const octokit = github.getOctokit(token);
             const context = github.context;
