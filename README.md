@@ -1,25 +1,35 @@
 # PMAT GitHub Action
 
-This GitHub Action uses the PMAT tool to check complexity on your source code. The PMAT tool is automatically
-downloaded and installed in your CI environment. The cyclomatic complexity for each file
-is calculated and then reported back in the Pull Request as Markdown using the GitHub token and making it very simple for the user
+Automatically analyze code complexity in your pull requests with the PMAT (PaiML Agent Toolkit) complexity analyzer.
 
+## 🚀 Features
+
+- **Automated Complexity Analysis**: Calculates cyclomatic and cognitive complexity for your codebase
+- **Pull Request Integration**: Posts detailed complexity reports directly in your PRs
+- **Configurable Thresholds**: Set custom complexity limits that fit your project's needs
+- **Zero Setup**: No additional dependencies or tools to install
+- **Multi-language Support**: Works with various programming languages
+
+## 📋 Quick Start
+
+Add this workflow to your repository at `.github/workflows/complexity-check.yml`:
 
 ```yaml
-name: Complexity Check
+name: Code Complexity Check
 
-on: [push, pull_request]
+on:
+  pull_request:
+    branches: [ main ]
 
 jobs:
   complexity:
     runs-on: ubuntu-latest
-
+    
     steps:
-
-      - name: Check out source repository
-        uses: actions/checkout@v3
-
-      - name: Check project complexity
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Run complexity analysis
         uses: paiml/pmat-action@v1
         with:
           max-cyclomatic: 20
@@ -27,133 +37,107 @@ jobs:
           comment-on-pr: true
 ```
 
-This action downloads and installs the tool using the recommended installation for Linux environments:
+## ⚙️ Configuration
 
-```
-curl -sSfL https://raw.githubusercontent.com/paiml/paiml-mcp-agent-toolkit/master/scripts/install.sh | sh
-```
+| Input | Description | Default | Required |
+|-------|-------------|---------|----------|
+| `max-cyclomatic` | Maximum allowed cyclomatic complexity | `10` | No |
+| `fail-on-violation` | Fail the check if violations are found | `true` | No |
+| `comment-on-pr` | Post results as PR comment | `true` | No |
 
-When running, it uses the following:
+### Example Configurations
 
-```
-pmat analyze complexity --fail-on-violation {FAIL_ON_VIOLATION} --max-cyclomatic {MAX_CYCLOMATIC} --format JSON
-```
-
-The tool will return JSON with paths. This is an example output:
-
-```json
-{
-  "files": [
-    {
-      "classes": [],
-      "functions": [
-        {
-          "line_end": 11,
-          "line_start": 1,
-          "metrics": {
-            "cognitive": 18,
-            "cyclomatic": 12,
-            "lines": 15,
-            "nesting_max": 4
-          },
-          "name": "watch"
-        }
-      ],
-      "path": "./src/server/watcher.rs",
-      "total_complexity": {
-        "cognitive": 17,
-        "cyclomatic": 10,
-        "lines": 15,
-        "nesting_max": 4
-      }
-    }
-  ],
-  "summary": {
-    "files": [
-      {
-        "classes": [],
-        "functions": [
-          {
-            "line_end": 11,
-            "line_start": 1,
-            "metrics": {
-              "cognitive": 18,
-              "cyclomatic": 12,
-              "lines": 15,
-              "nesting_max": 4
-            },
-            "name": "watch"
-          }
-        ],
-        "path": "./src/server/watcher.rs",
-        "total_complexity": {
-          "cognitive": 17,
-          "cyclomatic": 10,
-          "lines": 15,
-          "nesting_max": 4
-        }
-      }
-    ],
-    "hotspots": [
-      {
-        "complexity": 12,
-        "complexity_type": "cyclomatic",
-        "file": "./src/server/watcher.rs",
-        "function": "watch",
-        "line": 1
-      }
-    ],
-    "summary": {
-      "max_cognitive": 18,
-      "max_cyclomatic": 12,
-      "median_cognitive": 18.0,
-      "median_cyclomatic": 12.0,
-      "p90_cognitive": 18,
-      "p90_cyclomatic": 12,
-      "technical_debt_hours": 1.75,
-      "total_files": 1,
-      "total_functions": 1
-    },
-    "violations": [
-      {
-        "file": "./src/server/watcher.rs",
-        "function": "watch",
-        "line": 1,
-        "message": "Cyclomatic complexity of 12 exceeds maximum allowed complexity of 10",
-        "rule": "cyclomatic-complexity",
-        "severity": "error",
-        "threshold": 10,
-        "value": 12
-      },
-      {
-        "file": "./src/server/watcher.rs",
-        "function": "watch",
-        "line": 1,
-        "message": "Cognitive complexity of 18 exceeds recommended complexity of 15",
-        "rule": "cognitive-complexity",
-        "severity": "warning",
-        "threshold": 15,
-        "value": 18
-      }
-    ]
-  },
-  "top_files_limit": 10
-}
+**Strict complexity checking:**
+```yaml
+- uses: paiml/pmat-action@v1
+  with:
+    max-cyclomatic: 10
+    fail-on-violation: true
+    comment-on-pr: true
 ```
 
-It uses the `violations` array value to provide Markdown information in the pull request that points to each file. For example:
+**Relaxed checking (warnings only):**
+```yaml
+- uses: paiml/pmat-action@v1
+  with:
+    max-cyclomatic: 25
+    fail-on-violation: false
+    comment-on-pr: true
+```
+
+## 📊 What You'll See
+
+When complexity violations are found, the action will:
+
+1. **Fail the check** (if `fail-on-violation: true`)
+2. **Post a detailed report** in your PR with:
+   - List of files with complexity violations
+   - Specific functions that exceed thresholds
+   - Severity levels (error/warning)
+   - Direct links to problematic code
+
+### Sample PR Comment
 
 ```markdown
-## Automated Check Failed!
+## 🔍 Code Complexity Analysis
 
-Cyclomatic complexity found:
+**❌ Violations Found**
 
-# Code Complexity Violations
+| File | Function | Complexity | Threshold | Severity |
+|------|----------|------------|-----------|----------|
+| [src/server/watcher.rs](src/server/watcher.rs#L1) | watch | 12 | 10 | error |
+| [src/utils/parser.js](src/utils/parser.js#L45) | parseData | 18 | 15 | warning |
 
-| Path | Severity | Value |
-|------|----------|-------|
-| [./src/server/watcher.rs](./src/server/watcher.rs) | error | 12 |
-| [./src/server/watcher.rs](./src/server/watcher.rs) | warning | 18 |
+**💡 Tip**: Consider breaking down complex functions into smaller, more manageable pieces.
 ```
 
-Ideally, the links would go into the actual files in the pull request, not the files in the default repository branch.
+## 🎯 Why Use This Action?
+
+- **Maintain Code Quality**: Catch overly complex code before it reaches production
+- **Improve Readability**: Encourage simpler, more maintainable code patterns
+- **Team Consistency**: Enforce complexity standards across your entire team
+- **Early Detection**: Identify potential maintenance issues during code review
+
+## 🔧 Advanced Usage
+
+### Custom Workflow Triggers
+
+```yaml
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+    paths: 
+      - 'src/**'
+      - 'lib/**'
+```
+
+### Matrix Builds
+
+```yaml
+strategy:
+  matrix:
+    max-complexity: [10, 15, 20]
+steps:
+  - uses: paiml/pmat-action@v1
+    with:
+      max-cyclomatic: ${{ matrix.max-complexity }}
+```
+
+## 📚 Understanding Complexity Metrics
+
+- **Cyclomatic Complexity**: Measures the number of linearly independent paths through code
+- **Cognitive Complexity**: Measures how difficult code is to understand
+- **Recommended Thresholds**:
+  - Low complexity: 1-10
+  - Moderate complexity: 11-20
+  - High complexity: 21+ (consider refactoring)
+
+## 🤝 Contributing
+
+Found a bug or have a feature request? Please [open an issue](../../issues) or submit a pull request.
+
+## 📄 License
+
+This action is distributed under the MIT License. See `LICENSE` for more information.
