@@ -12,7 +12,7 @@ export interface PmatOutput {
   };
 }
 
-export async function runPmat(maxCyclomatic: string, failOnViolation: boolean): Promise<PmatOutput> {
+export async function runPmat(maxCyclomatic: string, failOnViolation: string): Promise<PmatOutput> {
   let output = '';
   const options = {
     listeners: {
@@ -24,10 +24,8 @@ export async function runPmat(maxCyclomatic: string, failOnViolation: boolean): 
 
   // Build the command with conditional flag inclusion
   let command = `pmat analyze complexity`;
-  if (failOnViolation) {
-    command += ` --fail-on-violation`;
-  }
-  command += ` --max-cyclomatic ${maxCyclomatic} --format JSON`;
+
+  command += ` --max-cyclomatic ${maxCyclomatic} --format json`;
 
   await exec.exec(command, [], options);
   return JSON.parse(output);

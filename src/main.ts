@@ -15,6 +15,11 @@ async function run() {
 
     const results = await runPmat(maxCyclomatic, failOnViolation);
 
+    // Early return if no violations
+    if (!results.summary?.violations || results.summary.violations.length === 0) {
+      return;
+    }
+
     if (commentOnPr === 'true' && github.context.payload.pull_request) {
       const octokit = github.getOctokit(token);
       const context = github.context;
